@@ -58,9 +58,9 @@ import qualified Codec.JVM.ConstPool as CP
 
 mkClassFile :: Version
             -> [AccessFlag]
-            -> Text         -- class name
-            -> Maybe Text   -- superclass, java/lang/Object is nothing
-            -> [Text]       -- Interfaces
+            -> Text         -- ^ class name
+            -> Maybe Text   -- ^ superclass, java/lang/Object is nothing
+            -> [Text]       -- ^ Interfaces
             -> [FieldDef]
             -> [MethodDef]
             -> ClassFile
@@ -92,7 +92,13 @@ mkClassFile v afs tc' sc' is' fds mds = ClassFile cs v (Set.fromList afs) tc sc 
 data MethodDef = MethodDef [AccessFlag] UName MethodDesc Code
   deriving Show
 
-mkMethodDef :: Text -> [AccessFlag] -> Text -> [FieldType] -> ReturnType -> Code -> MethodDef
+mkMethodDef :: Text -- ^ Class name
+            -> [AccessFlag] 
+            -> Text -- ^ Method name. Example: "main"
+            -> [FieldType] 
+            -> ReturnType 
+            -> Code 
+            -> MethodDef
 mkMethodDef cls afs n fts rt cs = mkMethodDef' afs n (mkMethodDesc fts rt) code
   where code = Code.initCtrlFlow (Static `elem` afs) ((obj cls) : fts) <> cs
 
