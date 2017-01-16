@@ -159,7 +159,7 @@ putstatic fr@(FieldRef _ _ ft) = mkCode cs $ fold
 opStack :: (FieldType -> Stack -> Stack) -> FieldType -> Opcode -> Code
 opStack f ft oc = mkCode' $ IT.op oc <> modifyStack (f ft)
 
-unaryOp, binaryOp, shiftOp :: FieldType -> Opcode -> Code
+unaryOp, binaryOp, shiftOp, cmpOp :: FieldType -> Opcode -> Code
 unaryOp  = opStack (\ft -> CF.push ft . CF.pop ft)
 binaryOp = opStack (\ft -> CF.push ft . CF.pop ft . CF.pop ft)
 shiftOp  = opStack (\ft -> CF.push ft . CF.pop ft . CF.pop jint)
@@ -543,8 +543,8 @@ gconv ft1 ft2 = mkCode (cs ft2) $ convOpcode
 
 -- Heuristic taken from https://ghc.haskell.org/trac/ghc/ticket/9159
 gswitch :: Code -> [(Int, Code)] -> Maybe Code -> Code
-gswitch expr [] (Just deflt)     = deflt
-gswitch expr [(_, code)] Nothing = code
+gswitch _ [] (Just deflt)     = deflt
+gswitch _ [(_, code)] Nothing = code
                          --     iconst jint (fromIntegral v)
                          --  <> if_icmpeq code mempty
 gswitch expr [(v, code)] (Just deflt) = expr
